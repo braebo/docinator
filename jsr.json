@@ -2,8 +2,8 @@
   "$schema": "https://jsr.io/schema/config-file.v1.json",
   "name": "@braebo/docinator",
   "version": "0.1.0",
-  "exports": "./src/index.ts.ts",
+  "exports": "./src/docinator.ts",
   "publish": {
-    "include": ["./src/index.ts.ts", "README.md", "LICENSE"]
+    "include": ["./src/docinator.ts", "README.md", "LICENSE"]
   }
 }

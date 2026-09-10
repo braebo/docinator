@@ -101,7 +101,7 @@ const instance = new Marked(
 instance.setOptions({ renderer })
 
 /**
- * Converts rich-text from examples to {@link Blocks} with syntax highlighting using shikiji.
+ * Converts examples from rich-text to {@link Blocks} with syntax highlighting using shikiji.
  */
 async function main(input_path: string, output_path: string) {
 	// Resolve the input and output paths to absolute paths.

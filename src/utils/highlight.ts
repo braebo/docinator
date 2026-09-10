@@ -1,23 +1,22 @@
 // todo - update this to use the new shiki API
+import svelte from 'shiki/langs/svelte.mjs'
+import typescript from 'shiki/langs/typescript.mjs'
+import javascript from 'shiki/langs/javascript.mjs'
 
 import type { LanguageInput, ThemeInput } from 'shiki'
 import type { HighlighterCore } from 'shiki/core'
 import type { CodeToHastOptions } from 'shiki'
 
-// import { transformerTwoSlash } from 'shikiji-twoslash'
 import { serendipity } from './highlight.serendipity'
 import { createHighlighterCore } from 'shiki/core'
+import getWasm from 'shiki/wasm'
 import {
 	transformerNotationHighlight,
 	transformerNotationFocus,
 	transformerNotationDiff,
 } from '@shikijs/transformers'
 
-// import { getWasmInlined, bundledLanguages } from 'shiki'
-import { getWasmInlined } from 'shiki'
-// import { logger } from './logger'
 import { fmtTime } from './fmtTime'
-// import { dim, o } from './l'
 import { dim } from './l'
 
 // const log = logger('highlight', { fg: '#94b8ff', deferred: false, browser: DEBUG, server: DEBUG })
@@ -39,11 +38,6 @@ export type HighlightOptions = CodeToHastOptions<string, string> & {
 export const HIGHLIGHT_DEFAULTS: HighlightOptions = {
 	lang: 'svelte',
 	theme: 'serendipity',
-	// transformers: [
-	// 	transformerNotationHighlight(),
-	// 	transformerNotationFocus(),
-	// 	transformerNotationDiff(),
-	// ],
 } as const
 
 const themes = new Set<ThemeInput>()
@@ -66,33 +60,6 @@ export async function highlight(text: string, options?: Partial<HighlightOptions
 	const highlighter = await getHighlighterInstance()
 
 	if (!highlighter) throw new Error('Unable to load highlighter')
-
-	// await loadLanguage(highlighter, lang)
-
-	// const all = highlighter.getLoadedLanguages()
-
-	// if (!all.includes(lang)) {
-	// 	log(o('Language not loaded:'), lang, all)
-
-	// 	await highlighter.loadLanguage(bundledLanguages[lang as keyof typeof bundledLanguages])
-
-	// 	log('loaded', lang)
-
-	// 	// if (!all.includes(lang)) {
-	// 	// 	throw new Error(`Unable to load language "${lang}"`)
-	// 	// }
-	// }
-
-	// if (!themes.has(theme)) {
-	// 	log('theme | missing |', theme)
-
-	// 	const { bundledThemes } = await import('shiki')
-
-	// 	await highlighter.loadTheme(bundledThemes[theme])
-	// 	themes.add(theme)
-
-	// 	log('theme | loaded |', theme)
-	// }
 
 	try {
 		const highlighted = highlighter.codeToHtml(text, {
@@ -120,32 +87,10 @@ let highlighterInstance: HighlighterCore
 export async function getHighlighterInstance() {
 	if (!highlighterInstance) {
 		highlighterInstance = await createHighlighterCore({
-			loadWasm: getWasmInlined,
+			loadWasm: getWasm,
 			themes: [serendipity],
-			langs: [
-				import('shiki/langs/svelte.mjs'),
-				import('shiki/langs/typescript.mjs'),
-				import('shiki/langs/javascript.mjs'),
-			],
-			// langs: [],
+			langs: [svelte, typescript, javascript],
 		})
 	}
 	return highlighterInstance
 }
-
-// const langs = new Set<string>()
-// /**
-//  * Load a language into the highlighter.
-//  * @internal
-//  */
-// export async function loadLanguage(highlighter: HighlighterCore, lang: string) {
-// 	if (langs.has(lang)) return
-
-// 	log('pending | ' + lang)
-// 	await highlighter.loadLanguage(bundledLanguages[lang])
-// 	log('loaded | ' + lang)
-
-// 	langs.add(lang)
-
-// 	return lang
-// }
